@@ -9,16 +9,18 @@ class Trie:
 
     def __init__(self) -> None:
         self._root = self.Node()
+        self._size = 0
 
-    def search(self, s: str) -> Union[int, None]:
+    def search(self, s: str) -> int:
         curr = self._root
         for ch in s:
             if ch not in curr.children:
-                return None
+                return 0
             curr = curr.children[ch]
         return curr.count
     
     def insert(self, s: str) -> None:
+        self._size += 1
         curr = self._root
         for ch in s[:-1]:
             if ch not in curr.children:
@@ -28,6 +30,9 @@ class Trie:
             curr.children[s[-1]] = self.Node(1)
         else:
             curr.children[s[-1]].count += 1
+
+    def __len__(self) -> int:
+        return self._size
 
 def create_trie(status: Status) -> Trie:
     trie = Trie()
