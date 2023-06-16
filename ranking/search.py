@@ -4,21 +4,18 @@ from structures.graph import Graph
 from structures.trie import Trie
 
 
-WORD_WEIGHT = 10
+WORD_WEIGHT = 1000
+PHRASE_WEIGHT = 1000
 GROWTH_FACTOR = 1.5
 
 
 def word_score(words: list[str], trie: Trie) -> float:
-    if len(trie) == 0:
-        return 0
     score = 0
     for word in words:
         count = trie.search(word)
         if count == 0:
             continue
-        percentage = 100 * count / len(trie)
-        score += GROWTH_FACTOR ** percentage
-    score *= WORD_WEIGHT
+        score += GROWTH_FACTOR ** count
     return score
 
 
@@ -75,7 +72,7 @@ def phrase_score(phrases: list[str], status: Status) -> float:
 # words: list of words to search for
 # phrases: list of phrases to search for (phrases contain multiple words)
 def search_score(status: Status, words: list[str], phrases: list[str], trie_map: dict, user: str, affinity_graph: Graph) -> float:
-    return 2000 * word_score(words, trie_map[status.status_id]) + 100000 * phrase_score(phrases, status) + 0.01*edge_rank_score(status, user, affinity_graph)
+    return WORD_WEIGHT * word_score(words, trie_map[status.status_id]) + PHRASE_WEIGHT * phrase_score(phrases, status) + 0.2**edge_rank_score(status, user, affinity_graph)
 
 
 def search(query: str, statuses: list[Status], trie_map: dict, user: str, affinity_graph: Graph) -> list[Status]:

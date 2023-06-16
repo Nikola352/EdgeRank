@@ -1,17 +1,17 @@
-import time
+import time, math
 
 from entity.status import Status
 from structures.graph import Graph
 
 
-TIME_DECAY_FACTOR = 0.5
-REACTION_WEIGHT = 1
-COMMENT_WEIGHT = 3
+TIME_DECAY_FACTOR = 0.8
+REACTION_WEIGHT = 0.1
+COMMENT_WEIGHT = 7
 SHARE_WEIGHT = 3
 
 
-def time_decay_factor(current_time: time.struct_time):
-    time_delta = time.time() - time.mktime(current_time)
+def time_decay_factor(t_time: time.struct_time):
+    time_delta = time.time() - time.mktime(t_time)
     if time_delta < 3600: # 1 hour
         return 20 * TIME_DECAY_FACTOR ** (time_delta / 3600)
     elif time_delta < 86400: # 1 day
@@ -42,12 +42,17 @@ def status_weight(status: Status):
     score += SHARE_WEIGHT * status.num_shares
     if status.status_type == "photo":
         score *= 1.5
+    score = math.log10(score)
     return score
 
 
-def edge_rank_score(status: Status, user: str, affinity_graph):
-    return affinity_graph[user][status.author] * status_weight(status) * time_decay_factor(status.date_published)
+def edge_rank_score(status: Status, user: str, affinity_graph: Graph):
+    if user in affinity_graph.nodes:
+        user_affinity = affinity_graph.get_edge(user, status.author)
+    else:
+        user_affinity = 1
+    return user_affinity * status_weight(status) * time_decay_factor(status.date_published)
 
 
 def edge_rank(user: str, statuses: list[Status], affinity_graph: Graph) -> list[Status]:
-    return sorted(statuses, key=lambda status: edge_rank_score(status, user, affinity_graph))
+    return sorted(statuses, key=lambda status: edge_rank_score(status, user, affinity_graph), reverse=True)[:10]
