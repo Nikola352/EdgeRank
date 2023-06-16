@@ -25,6 +25,17 @@ class Graph:
             row.append(0)
         self._mat.append([0] * self._size)
 
+    def add_nodes(self, nodes: list):
+        start_id = self._size
+        self._size += len(nodes)
+        self._nodes += nodes
+        for node in nodes:
+            self._ids[node] = start_id
+            start_id += 1
+        for row in self._mat:
+            row += [0] * len(nodes)
+        self._mat += [[0] * self._size for _ in range(len(nodes))]
+
     def set_edge_weight_by_id(self, src:int, dest:int, val:float):
         self._mat[src][dest] = val
 
