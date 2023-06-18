@@ -53,11 +53,8 @@ def share_affinity(share: Share) -> float:
 def add_affinity(affinity_graph: Graph, friends_graph: Graph, statuses: dict, comments: list[Comment], reactions: list[Reaction], shares: list[Share]) -> Graph:
     users = affinity_graph.nodes
     for user1 in users:
-        for user2 in users:
-            if user1 == user2:
-                continue
-            if friends_graph.get_edge(user1, user2) > 0:
-                affinity_graph.increase_edge_weight(user1, user2, FREINDS_WEIGHT)
+        for user2 in affinity_graph.get_neighbors(user1):
+            affinity_graph.increase_edge_weight(user1, user2, FREINDS_WEIGHT)
 
     for comment in comments:
         affinity_graph.increase_edge_weight(comment.author, statuses[comment.status_id].author, comment_affinity(comment))
@@ -68,15 +65,14 @@ def add_affinity(affinity_graph: Graph, friends_graph: Graph, statuses: dict, co
     for share in shares:
         affinity_graph.increase_edge_weight(share.sharer, statuses[share.status_id].author, share_affinity(share))
 
+    # increase all edges by 1 (because the default weight is 1, and some scores could be less than 1)
     for user1 in users:
-        for user2 in users:
-            if user1 == user2:
-                continue
+        for user2 in affinity_graph.get_neighbors(user1):
             affinity_graph.increase_edge_weight(user1, user2, 1)
 
     return affinity_graph
 
 
 def create_affinity_graph(friends_graph: Graph, statuses: dict, comments: list[Comment], reactions: list[Reaction], shares: list[Share]) -> Graph:
-    affinity_graph = Graph(friends_graph.nodes)
+    affinity_graph = Graph(friends_graph.nodes, 1)
     return add_affinity(affinity_graph, friends_graph, statuses, comments, reactions, shares)
