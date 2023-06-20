@@ -1,8 +1,9 @@
 import time
 from entity.status import Status
 from ranking.edge_rank import edge_rank
-from ranking.search import search as post_search, parse_query
+from ranking.search import search as search, parse_query
 from structures.graph import Graph
+from structures.trie import Trie
 
 
 def login() -> str:
@@ -55,7 +56,7 @@ def show_feed(user: str, statuses: list[Status], affinity_graph: Graph):
     print("---------------")
 
 
-def search(user: str, statuses: list[Status], trie_map: dict[str, list[Status]], affinity_graph: Graph):
+def run_search(user: str, statuses: list[Status], trie: Trie, affinity_graph: Graph):
     while True:
         print("\033[1;36mSEARCH\033[0m")
         print("---------------")
@@ -70,7 +71,7 @@ def search(user: str, statuses: list[Status], trie_map: dict[str, list[Status]],
 
         words, phrases = parse_query(keyword)
 
-        results = post_search(keyword, statuses, trie_map, user, affinity_graph)
+        results = search(keyword, statuses, trie, user, affinity_graph)
 
         for result in results:
             print('====================')
