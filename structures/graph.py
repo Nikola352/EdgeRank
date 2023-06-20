@@ -3,7 +3,7 @@ class Graph:
         self._size = len(nodes)
         self._nodes = nodes
         self._ids = self._assign_ids()
-        self._adj = [{}] * self._size
+        self._adj = [{} for _ in range(self._size)]
         self._default_weight = default_weight
 
     def _assign_ids(self):
@@ -57,3 +57,7 @@ class Graph:
     
     def get_neighbors(self, node) -> list:
         return map(lambda i: self._nodes[i], self.get_neighbors_by_id(self._ids[node]))
+    
+    def __contains__(self, node) -> bool:
+        # return node in self._nodes # O(n)
+        return node in self._ids # O(1)

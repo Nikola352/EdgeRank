@@ -5,10 +5,10 @@ from entity.share import Share
 from ranking.edge_rank import time_decay_factor, reaction_score
 
 
-FREINDS_WEIGHT = 20
-COMMENT_WEIGHT = 7
-REACTION_WEIGHT = 1
-SHARE_WEIGHT = 5
+FREINDS_WEIGHT = 200
+COMMENT_WEIGHT = 70
+REACTION_WEIGHT = 10
+SHARE_WEIGHT = 50
 
 
 def comment_affinity(comment: Comment) -> float:
@@ -53,7 +53,7 @@ def share_affinity(share: Share) -> float:
 def add_affinity(affinity_graph: Graph, friends_graph: Graph, statuses: dict, comments: list[Comment], reactions: list[Reaction], shares: list[Share]) -> Graph:
     users = affinity_graph.nodes
     for user1 in users:
-        for user2 in affinity_graph.get_neighbors(user1):
+        for user2 in friends_graph.get_neighbors(user1):
             affinity_graph.increase_edge_weight(user1, user2, FREINDS_WEIGHT)
 
     for comment in comments:
