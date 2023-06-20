@@ -1,5 +1,5 @@
 from data_utils.init_data import init_statuses, init_affinity_graph
-from structures.trie import create_trie_map
+from structures.trie import create_trie
 import pickle, time
 
 STATUSES_DIR = "dataset/original_statuses.csv"
@@ -8,7 +8,7 @@ COMMENTS_DIR = "dataset/original_comments.csv"
 REACTIONS_DIR = "dataset/original_reactions.csv"
 SHARES_DIR = "dataset/original_shares.csv"
 GRAPH_DIR = "pickle/graph.pkl"
-TRIE_MAP_DIR = "pickle/trie_map.pkl"
+TRIE_DIR = "pickle/trie_map.pkl"
 
 def main():
     print("Loading statuses...")
@@ -23,11 +23,11 @@ def main():
         pickle.dump(affinity_graph, file)
     print("Created affinity graph in", time.time()-timer, "seconds")
 
-    print("Creating trie map...")
+    print("Creating trie...")
     timer = time.time()
-    trie_map = create_trie_map(status_list)
-    with open(TRIE_MAP_DIR, "wb") as file:
-        pickle.dump(trie_map, file)
+    trie = create_trie(status_list)
+    with open(TRIE_DIR, "wb") as file:
+        pickle.dump(trie, file)
     print("Created trie map in", time.time()-timer, "seconds")
 
 if __name__ == "__main__":

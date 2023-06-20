@@ -4,7 +4,7 @@ from entity.comment import Comment
 from entity.reaction import Reaction
 from entity.share import Share
 from structures.graph import Graph
-from structures.trie import create_trie_map
+from structures.trie import Trie, create_trie
 from ranking.affinity_graph import add_affinity
 from data_utils.parse_files import *
 import pickle, time
@@ -15,7 +15,7 @@ COMMENTS_DIR = "dataset/test_comments.csv"
 REACTIONS_DIR = "dataset/test_reactions.csv"
 SHARES_DIR = "dataset/test_shares.csv"
 GRAPH_DIR = "pickle/graph.pkl"
-TRIE_MAP_DIR = "pickle/trie_map.pkl"
+TRIE_DIR = "pickle/trie_map.pkl"
 
 OLD_STATUSES_DIR = "dataset/original_statuses.csv"
 NEW_STATUSES_DIR = "dataset/new_statuses.csv"
@@ -56,17 +56,22 @@ def main():
         pickle.dump(affinity_graph, file)
     print("Updated affinity graph in", time.time()-timer, "seconds")
 
-    print("Loading trie map...")
-    with open(TRIE_MAP_DIR, "rb") as file:
-        trie_map: dict = pickle.load(file)
+    print("Loading trie...")
+    with open(TRIE_DIR, "rb") as file:
+        trie: Trie = pickle.load(file)
 
     print("Updating trie map...")
     timer = time.time()
-    new_trie_map = create_trie_map(new_status_list)
-    trie_map.update(new_trie_map)
-    with open(TRIE_MAP_DIR, "wb") as file:
-        pickle.dump(trie_map, file)
-    print("Updated trie map in", time.time()-timer, "seconds")
+    for status in status_list:
+        words = status.status_message.split()
+        words = ["".join(filter(str.isalnum, word)) for word in words] # remove non-alphanumeric characters
+        words = list(filter(lambda word: word != "", words)) # remove empty string
+        words = list(map(lambda word: word.lower(), words)) # to lower case
+        for word in words:
+            trie.insert(word, status.status_id)
+    with open(TRIE_DIR, "wb") as file:
+        pickle.dump(trie, file)
+    print("Updated trie in", time.time()-timer, "seconds")
 
 if __name__ == "__main__":
     main()
