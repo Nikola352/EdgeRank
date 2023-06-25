@@ -15,7 +15,7 @@ COMMENTS_DIR = "dataset/test_comments.csv"
 REACTIONS_DIR = "dataset/test_reactions.csv"
 SHARES_DIR = "dataset/test_shares.csv"
 GRAPH_DIR = "pickle/graph.pkl"
-TRIE_DIR = "pickle/trie_map.pkl"
+TRIE_DIR = "pickle/trie.pkl"
 
 OLD_STATUSES_DIR = "dataset/original_statuses.csv"
 NEW_STATUSES_DIR = "dataset/new_statuses.csv"

@@ -8,7 +8,7 @@ COMMENTS_DIR = "dataset/original_comments.csv"
 REACTIONS_DIR = "dataset/original_reactions.csv"
 SHARES_DIR = "dataset/original_shares.csv"
 GRAPH_DIR = "pickle/graph.pkl"
-TRIE_DIR = "pickle/trie_map.pkl"
+TRIE_DIR = "pickle/trie.pkl"
 
 def main():
     print("Loading statuses...")
@@ -28,7 +28,7 @@ def main():
     trie = create_trie(status_list)
     with open(TRIE_DIR, "wb") as file:
         pickle.dump(trie, file)
-    print("Created trie map in", time.time()-timer, "seconds")
+    print("Created trie in", time.time()-timer, "seconds")
 
 if __name__ == "__main__":
     main()
