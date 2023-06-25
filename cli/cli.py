@@ -56,6 +56,38 @@ def show_feed(user: str, statuses: list[Status], affinity_graph: Graph):
     print("---------------")
 
 
+class EndOfInputException(Exception): pass
+
+
+def show_autocomplete(query: str, trie: Trie):
+    words = query.lower().split()
+    last_word = words[-1][:-1]
+    candidates = trie.autocomplete_candidates(last_word)
+
+    print(f"\nAUTOCOMPLETE ACTIVATED")
+    for i, word in enumerate(candidates):
+        print(f'{i+1}. {word}')
+    print(f'{len(candidates)+1}. {last_word} (keep the original)')
+
+    valid_input = False
+    while not valid_input:
+        try:
+            idx = input(f"Choose an option (1-{len(candidates)+1}): ")
+            idx = int(idx) - 1
+            if idx < 0 or idx > len(candidates):
+                raise ValueError
+            valid_input = True
+        except ValueError:
+            print("\033[1;31mInvalid option!\033[0m")
+    
+    if idx == len(candidates):
+        words[-1] = last_word
+    else:
+        words[-1] = candidates[idx]
+
+    return ''.join(words)
+
+
 def run_search(user: str, statuses: list[Status], trie: Trie, affinity_graph: Graph):
     while True:
         print("\033[1;36mSEARCH\033[0m")
@@ -65,6 +97,9 @@ def run_search(user: str, statuses: list[Status], trie: Trie, affinity_graph: Gr
 
         if keyword == 'exit':
             break
+
+        if keyword.endswith('*'):
+            keyword = show_autocomplete(keyword, trie)
 
         print("---------------")
         print("Here are the most relevant posts for your search:")
