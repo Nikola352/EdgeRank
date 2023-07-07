@@ -1,5 +1,5 @@
 from data_utils.friends_graph import load_friends_graph
-from data_utils.init_data import init_statuses, init_affinity_graph
+from data_utils.init_data import init_statuses
 from entity.comment import Comment
 from entity.reaction import Reaction
 from entity.share import Share

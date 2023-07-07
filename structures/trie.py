@@ -1,4 +1,3 @@
-from typing import Union
 from entity.status import Status
 
 class Trie:
