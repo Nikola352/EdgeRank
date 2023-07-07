@@ -188,6 +188,7 @@ def adjust_date_time(statuses_path, comments_path, shares_path, reactions_path):
         for status in statuses:
             status_datetime = status[4]
             new_status_datetime = modify_date_to_recent(status_datetime)
+            status[4] = new_status_datetime
             status_to_datetime[status[0].strip()] = new_status_datetime
             file.write(",".join(status) + "\n")
 
